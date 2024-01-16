@@ -6,7 +6,7 @@ namespace App\Enum\JobApplication;
 
 enum Level: string
 {
-    case JUNIOR = 'junior';
-    case REGULAR = 'regular';
-    case SENIOR = 'senior';
+    case JUNIOR = 'Junior';
+    case REGULAR = 'Regular';
+    case SENIOR = 'Senior';
 }

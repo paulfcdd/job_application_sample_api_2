@@ -6,5 +6,5 @@ namespace App\Query;
 
 interface QueryDispatcherInterface
 {
-
+    public function dispatch(QueryInterface $query): mixed;
 }

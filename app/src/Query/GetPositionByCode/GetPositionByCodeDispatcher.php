@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 #[AsMessageHandler]
-readonly class GetPositionByCodeDispatcher implements QueryDispatcherInterface
+readonly class GetPositionByCodeDispatcher
 {
     public function __construct(
         private EntityManagerInterface $entityManager
