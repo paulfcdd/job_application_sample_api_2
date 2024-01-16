@@ -29,7 +29,7 @@ readonly class JobApplicationCreateRequest
         public string $email,
         #[Assert\NotBlank]
         #[Assert\Regex(
-            pattern: '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\./0-9]*$/',
+            pattern: '/^[\+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/',
             message: 'The phone number is not valid'
         )]
         public string $phone,
