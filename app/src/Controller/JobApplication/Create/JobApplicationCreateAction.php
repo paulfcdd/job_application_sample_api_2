@@ -22,8 +22,7 @@ class JobApplicationCreateAction extends AbstractController
         #[MapRequestPayload] JobApplicationCreateRequest $request
     ): JsonResponse
     {
-        $command = $request->getCommand();
-        $this->commandHandler->handle($command);
+        $this->commandHandler->handle($request->getCommand());
 
         return $this->json([
             'message' => 'Your application was successfully submitted'

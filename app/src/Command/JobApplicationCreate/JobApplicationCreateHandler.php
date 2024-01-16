@@ -21,7 +21,7 @@ readonly class JobApplicationCreateHandler
     ) {
     }
 
-    public function __invoke(JobApplicationCreateCommand $command): int
+    public function __invoke(JobApplicationCreateCommand $command): void
     {
         $position = $this->queryDispatcher->dispatch(new GetPositionByCodeQuery($command->position));
         $level = $this->calculator->determineJobLevel($command->expectedSalary);
@@ -38,7 +38,5 @@ readonly class JobApplicationCreateHandler
 
         $this->entityManager->persist($jobApplication);
         $this->entityManager->flush();
-
-        return $jobApplication->getId();
     }
 }
