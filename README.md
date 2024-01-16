@@ -1,1 +1,7 @@
-# rokezzz_test
+# Rokezzz test task
+
+## Requirements:
+
+## Setup:
+
+## Usage:
