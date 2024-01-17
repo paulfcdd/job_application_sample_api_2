@@ -22,7 +22,10 @@ abstract class JobApplicationListBaseAction extends AbstractController
     protected function handleRequest(Request $request, bool $isRead): JsonResponse
     {
         $page = (int) $request->query->get('page', 1);
-        $query = new GetJobApplicationListQuery($isRead, $page);
+        $sort = $request->query->get('sort', 'createdAt');
+        $order = $request->query->get('order', 'DESC');
+
+        $query = new GetJobApplicationListQuery($isRead, $page, $sort, $order);
         $result = $this->queryDispatcher->dispatch($query);
 
         return $this->json($result);

@@ -7,7 +7,6 @@ use App\Entity\Position;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 /**
  * @extends ServiceEntityRepository<JobApplication>
@@ -19,34 +18,28 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
  */
 class JobApplicationRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry, private readonly ParameterBagInterface $parameterBag)
+    public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, JobApplication::class);
     }
 
-    public function getList(bool $isRead, int $page = 1): array
+    public function getList(bool $isRead, int $limit, string $sort, string $order, int $page = 1): array
     {
-        $limit = $this->parameterBag->get('records_per_page');
         $queryBuilder = $this->createQueryBuilder('ja');
         $query = $queryBuilder
-            ->select("CONCAT(ja.firstName, ' ', ja.lastName) AS fullName, ja.email, ja.level, ja.expectedSalary, p.name, ja.createdAt")
+            ->select("ja.id, ja.firstName, ja.lastName, ja.email, ja.level, ja.expectedSalary, p.name, ja.createdAt")
             ->leftJoin(Position::class, 'p', Join::WITH, 'ja.position = p.id')
             ->where('ja.isRead = :isRead')
             ->setParameter('isRead', $isRead)
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
+            ->orderBy('ja.' . $sort, $order)
             ->getQuery();
-        $total = $this->getTotalCountByIsRead($isRead);
-        $pages = ceil($total / $limit);
 
-        return [
-            'pages' => (int)$pages,
-            'totalRecords' => $total,
-            'pageRecords' => $query->getResult(),
-        ];
+        return $query->getResult();
     }
 
-    private function getTotalCountByIsRead(bool $isRead): int
+    public function getTotalByStatus(bool $isRead): int
     {
         $queryBuilder = $this->createQueryBuilder('ja');
         $query = $queryBuilder
