@@ -27,7 +27,8 @@ class JobApplicationRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->createQueryBuilder('ja');
         $query = $queryBuilder
-            ->select("ja.id, ja.firstName, ja.lastName, ja.email, ja.level, ja.expectedSalary, p.name, ja.createdAt")
+            ->select("ja.id, ja.firstName, ja.lastName, ja.email, ja.level, ja.expectedSalary, 
+                  p.id as positionId, p.code as positionCode, p.name as positionName, ja.createdAt")
             ->leftJoin(Position::class, 'p', Join::WITH, 'ja.position = p.id')
             ->where('ja.isRead = :isRead')
             ->setParameter('isRead', $isRead)
@@ -36,7 +37,9 @@ class JobApplicationRepository extends ServiceEntityRepository
             ->orderBy('ja.' . $sort, $order)
             ->getQuery();
 
-        return $query->getResult();
+        $result = $query->getResult();
+
+        return $this->transformResult($result);
     }
 
     public function getTotalByStatus(bool $isRead): int
@@ -49,5 +52,18 @@ class JobApplicationRepository extends ServiceEntityRepository
             ->getQuery();
 
         return $query->getSingleScalarResult();
+    }
+
+    private function transformResult(array $result): array
+    {
+        return array_map(function ($item) {
+            $item['position'] = [
+                'id' => $item['positionId'],
+                'code' => $item['positionCode'],
+                'name' => $item['positionName']
+            ];
+            unset($item['positionId'], $item['positionCode'], $item['positionName']);
+            return $item;
+        }, $result);
     }
 }
