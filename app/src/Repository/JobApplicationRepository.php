@@ -5,6 +5,8 @@ namespace App\Repository;
 use App\Entity\JobApplication;
 use App\Entity\Position;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -23,14 +25,21 @@ class JobApplicationRepository extends ServiceEntityRepository
         parent::__construct($registry, JobApplication::class);
     }
 
-    public function getList(bool $isRead, int $limit, string $sort, string $order, int $page = 1): array
+    public function getList(bool $isRead, int $limit, string $sort, string $order, int $page = 1, ?int $position = null): array
     {
         $queryBuilder = $this->createQueryBuilder('ja');
         $query = $queryBuilder
             ->select("ja.id, ja.firstName, ja.lastName, ja.email, ja.level, ja.expectedSalary, 
-                  p.id as positionId, p.code as positionCode, p.name as positionName, ja.createdAt")
+                  p.id as positionId, p.name as positionName, ja.createdAt")
             ->leftJoin(Position::class, 'p', Join::WITH, 'ja.position = p.id')
-            ->where('ja.isRead = :isRead')
+            ->where('ja.isRead = :isRead');
+
+        if ($position) {
+            $query = $query->andWhere('p.id = :position')
+                ->setParameter('position', $position);
+        }
+
+        $query = $query
             ->setParameter('isRead', $isRead)
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit)
@@ -42,12 +51,24 @@ class JobApplicationRepository extends ServiceEntityRepository
         return $this->transformResult($result);
     }
 
-    public function getTotalByStatus(bool $isRead): int
+    /**
+     * @throws NonUniqueResultException
+     * @throws NoResultException
+     */
+    public function getTotal(bool $isRead, ?int $position = null): int
     {
         $queryBuilder = $this->createQueryBuilder('ja');
         $query = $queryBuilder
             ->select('COUNT(ja.id)')
-            ->where('ja.isRead = :isRead')
+            ->leftJoin(Position::class, 'p', Join::WITH, 'ja.position = p.id')
+            ->where('ja.isRead = :isRead');
+
+        if ($position) {
+            $query = $query->andWhere('p.id = :position')
+                ->setParameter('position', $position);
+        }
+
+        $query = $query
             ->setParameter('isRead', $isRead)
             ->getQuery();
 
@@ -59,10 +80,9 @@ class JobApplicationRepository extends ServiceEntityRepository
         return array_map(function ($item) {
             $item['position'] = [
                 'id' => $item['positionId'],
-                'code' => $item['positionCode'],
                 'name' => $item['positionName']
             ];
-            unset($item['positionId'], $item['positionCode'], $item['positionName']);
+            unset($item['positionId'], $item['positionName']);
             return $item;
         }, $result);
     }
