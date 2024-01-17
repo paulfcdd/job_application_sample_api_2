@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\File;
 use App\Entity\JobApplication;
 use App\Entity\Position;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -30,8 +31,10 @@ class JobApplicationRepository extends ServiceEntityRepository
         $queryBuilder = $this->createQueryBuilder('ja');
         $query = $queryBuilder
             ->select("ja.id, ja.firstName, ja.lastName, ja.email, ja.level, ja.expectedSalary, 
-                  p.id as positionId, p.name as positionName, ja.createdAt")
+                  p.id as positionId, p.name as positionName, ja.createdAt, f.name as cv")
             ->leftJoin(Position::class, 'p', Join::WITH, 'ja.position = p.id')
+            ->leftJoin(File::class, 'f', Join::WITH, 'ja.id = f.jobApplication')
+
             ->where('ja.isRead = :isRead');
 
         if ($position) {
