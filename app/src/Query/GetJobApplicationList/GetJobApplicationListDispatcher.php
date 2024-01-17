@@ -20,8 +20,8 @@ readonly class GetJobApplicationListDispatcher
     public function __invoke(GetJobApplicationListQuery $query): array
     {
         $limit = $this->parameterBag->get('records_per_page');
-        $list = $this->repository->getList($query->isRead, $limit, $query->sort, $query->order, $query->page);
-        $total = $this->repository->getTotalByStatus($query->isRead);
+        $list = $this->repository->getList($query->isRead, $limit, $query->sort, $query->order, $query->page, $query->position);
+        $total = $this->repository->getTotal($query->isRead, $query->position);
         $pages = (int)ceil($total / $limit);
 
         return [

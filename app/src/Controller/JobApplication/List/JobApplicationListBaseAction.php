@@ -24,8 +24,9 @@ abstract class JobApplicationListBaseAction extends AbstractController
         $page = (int) $request->query->get('page', 1);
         $sort = $request->query->get('sort', 'createdAt');
         $order = $request->query->get('order', 'DESC');
+        $position = (int)$request->query->get('position');
 
-        $query = new GetJobApplicationListQuery($isRead, $page, $sort, $order);
+        $query = new GetJobApplicationListQuery($isRead, $page, $sort, $order, $position);
         $result = $this->queryDispatcher->dispatch($query);
 
         return $this->json($result);

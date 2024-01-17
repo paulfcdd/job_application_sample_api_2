@@ -13,6 +13,7 @@ class GetJobApplicationListQuery implements QueryInterface
         public int    $page,
         public string $sort,
         public string $order,
+        public ?int   $position
     ) {
     }
 }
