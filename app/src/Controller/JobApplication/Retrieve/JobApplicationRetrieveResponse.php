@@ -14,6 +14,7 @@ class JobApplicationRetrieveResponse
         public int $expectedSalary,
         public string $position,
         public string $level,
+        public ?string $cv = null,
     ) {
     }
 }

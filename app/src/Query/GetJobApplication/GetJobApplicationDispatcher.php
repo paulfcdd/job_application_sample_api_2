@@ -39,8 +39,8 @@ readonly class GetJobApplicationDispatcher
             $jobApplication->getPhone(),
             $jobApplication->getExpectedSalary(),
             $jobApplication->getPosition()->getName(),
-            $jobApplication->getLevel()
-
+            $jobApplication->getLevel(),
+            $jobApplication->getFile()?->getName()
         );
     }
 }
