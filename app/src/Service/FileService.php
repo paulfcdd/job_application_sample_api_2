@@ -7,13 +7,17 @@ namespace App\Service;
 use App\Dto\FileDto;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToWriteFile;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Uid\Factory\UuidFactory;
 
 readonly class FileService
 {
     public function __construct(
         private FilesystemOperator $filesystem,
-        private UuidFactory $uuidFactory
+        private UuidFactory $uuidFactory,
+        private UrlGeneratorInterface $urlGenerator,
+        private RequestStack $requestStack,
     )
     {
     }
@@ -44,5 +48,13 @@ readonly class FileService
             }
             throw new UnableToWriteFile('Failed to upload file.', 0, $exception);
         }
+    }
+
+    public function generatePublicUrl(string $filename): string
+    {
+        $request = $this->requestStack->getCurrentRequest();
+        $baseURL = $request ? $request->getSchemeAndHttpHost() : '';
+
+        return $baseURL . $this->urlGenerator->generate('app.file_serve', ['fileName' => $filename]);
     }
 }
