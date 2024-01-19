@@ -10,6 +10,7 @@ use App\Command\UploadFile\UploadFileCommand;
 use App\Controller\JobApplication\Retrieve\JobApplicationRetrieveResponse;
 use App\Dto\FileDto;
 use App\Entity\JobApplication;
+use App\Exception\BadRequestException;
 use App\Exception\NotFoundException;
 use App\Query\GetJobApplication\GetJobApplicationQuery;
 use App\Query\GetJobApplicationList\GetJobApplicationListQuery;
@@ -34,9 +35,17 @@ readonly class JobApplicationService
     {
     }
 
+    /**
+     * @throws BadRequestException
+     */
     public function createJobApplication(JobApplicationCreateCommand $command): void
     {
-        $position = $this->positionRepository->findOneBy(['code' => $command->position]);
+        $position = $this->positionRepository->findOneBy(['id' => $command->position]);
+
+        if (!$position) {
+            throw new BadRequestException(sprintf('Position code `%s` is not allowed', $command->position));
+        }
+
         $level = $this->calculator->determineJobLevel($command->expectedSalary);
         $jobApplication = new JobApplication();
         $jobApplication
@@ -113,6 +122,7 @@ readonly class JobApplicationService
                 $uploadedFile->guessExtension(),
                 $uploadedFile->getPathname()
             );
+
             $uploadFileCommand = new UploadFileCommand($jobApplication, $fileDto);
             $this->commandHandler->handle($uploadFileCommand);
         }

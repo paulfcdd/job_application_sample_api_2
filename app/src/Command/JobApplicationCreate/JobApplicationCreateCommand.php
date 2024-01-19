@@ -15,7 +15,7 @@ class JobApplicationCreateCommand implements CommandInterface
         public string $email,
         public string $phone,
         public int $expectedSalary,
-        public string $position,
+        public int $position,
         public ?UploadedFile $file = null,
     ) {
     }

@@ -11,7 +11,7 @@ use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 readonly class UploadFileHandler
 {
     public function __construct(
-        private FileService            $fileService,
+        private FileService $fileService,
     ) {
     }
 

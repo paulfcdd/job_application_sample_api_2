@@ -27,7 +27,7 @@ class JobApplicationCreateRequest
         #[Assert\NotBlank]
         public readonly int $expectedSalary,
         #[Assert\NotBlank]
-        public readonly string $position,
+        public readonly int $position,
         #[Assert\File(
             maxSize: '5M',
             mimeTypes: ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']
