@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Service;
 
-use App\Dto\FileDto;
+use App\Command\UploadFile\UploadFileCommand;
+use App\Entity\File;
+use Doctrine\ORM\EntityManagerInterface;
 use League\Flysystem\FilesystemOperator;
 use League\Flysystem\UnableToWriteFile;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -18,12 +20,14 @@ readonly class FileService
         private UuidFactory $uuidFactory,
         private UrlGeneratorInterface $urlGenerator,
         private RequestStack $requestStack,
+        private EntityManagerInterface $entityManager,
     )
     {
     }
 
-    public function upload(FileDto $fileDto): string
+    public function upload(UploadFileCommand $uploadFileCommand): void
     {
+        $fileDto = $uploadFileCommand->fileDto;
         $fileName = sprintf('%s.%s',
             $this->uuidFactory->create(),
             $fileDto->fileExtension
@@ -41,7 +45,7 @@ readonly class FileService
                 fclose($stream);
             }
 
-            return $fileName;
+            $this->saveFileToDb($uploadFileCommand, $fileName);
         } catch (UnableToWriteFile $exception) {
             if (is_resource($stream)) {
                 fclose($stream);
@@ -56,5 +60,18 @@ readonly class FileService
         $baseURL = $request ? $request->getSchemeAndHttpHost() : '';
 
         return $baseURL . $this->urlGenerator->generate('app.file_serve', ['fileName' => $filename]);
+    }
+
+    private function saveFileToDb(UploadFileCommand $command, string $fileName): void
+    {
+        $file = new File();
+        $file->setJobApplication($command->jobApplication);
+        $file->setMimeType($command->fileDto->mimeType);
+        $file->setName($fileName);
+        $file->setOriginalName($command->fileDto->originalName);
+        $file->setSize($command->fileDto->size);
+
+        $this->entityManager->persist($file);
+        $this->entityManager->flush();
     }
 }
