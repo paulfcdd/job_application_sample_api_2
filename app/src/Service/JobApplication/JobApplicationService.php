@@ -43,7 +43,7 @@ readonly class JobApplicationService
         $position = $this->positionRepository->findOneBy(['id' => $command->position]);
 
         if (!$position) {
-            throw new BadRequestException(sprintf('Position code `%s` is not allowed', $command->position));
+            throw new BadRequestException(sprintf('Position id `%s` is not allowed', $command->position));
         }
 
         $level = $this->calculator->determineJobLevel($command->expectedSalary);
