@@ -7,6 +7,7 @@ namespace App\Controller\JobApplication\Create;
 use App\Command\CommandHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -14,14 +15,17 @@ use Symfony\Component\Routing\Attribute\Route;
 class JobApplicationCreateAction extends AbstractController
 {
     public function __construct(
-        private readonly CommandHandler $commandHandler
+        private readonly CommandHandler $commandHandler,
     ) {
     }
 
     public function __invoke(
-        #[MapRequestPayload] JobApplicationCreateRequest $request
+        #[MapRequestPayload] JobApplicationCreateRequest $request,
+        Request $httpRequest
     ): JsonResponse
     {
+        $file = $httpRequest->files->get('file');
+        $request->file = $file;
         $this->commandHandler->handle($request->getCommand());
 
         return $this->json([

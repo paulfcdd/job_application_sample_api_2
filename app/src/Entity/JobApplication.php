@@ -41,6 +41,9 @@ class JobApplication
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\OneToOne(mappedBy: 'jobApplication', cascade: ['persist', 'remove'])]
+    private ?File $file = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -155,6 +158,23 @@ class JobApplication
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getFile(): ?File
+    {
+        return $this->file;
+    }
+
+    public function setFile(File $file): static
+    {
+        // set the owning side of the relation if necessary
+        if ($file->getJobApplication() !== $this) {
+            $file->setJobApplication($this);
+        }
+
+        $this->file = $file;
 
         return $this;
     }

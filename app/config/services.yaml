@@ -5,6 +5,7 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     records_per_page: 5
+    files_upload_dir: '%kernel.project_dir%/var/files'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -22,3 +23,6 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    League\Flysystem\FilesystemOperator:
+        alias: 'default.storage'
