@@ -13,9 +13,8 @@ use App\Entity\JobApplication;
 use App\Exception\NotFoundException;
 use App\Query\GetJobApplication\GetJobApplicationQuery;
 use App\Query\GetJobApplicationList\GetJobApplicationListQuery;
-use App\Query\GetPositionByCode\GetPositionByCodeQuery;
-use App\Query\QueryDispatcherInterface;
 use App\Repository\JobApplicationRepository;
+use App\Repository\PositionRepository;
 use App\Service\FileService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
@@ -24,20 +23,20 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 readonly class JobApplicationService
 {
     public function __construct(
-        private QueryDispatcherInterface $queryDispatcher,
         private CommandHandlerInterface  $commandHandler,
         private JobLevelCalculator       $calculator,
         private EntityManagerInterface   $entityManager,
         private ParameterBagInterface    $parameterBag,
         private JobApplicationRepository $jobApplicationRepository,
         private FileService              $fileService,
+        private PositionRepository $positionRepository,
     )
     {
     }
 
     public function createJobApplication(JobApplicationCreateCommand $command): void
     {
-        $position = $this->queryDispatcher->dispatch(new GetPositionByCodeQuery($command->position));
+        $position = $this->positionRepository->findOneBy(['code' => $command->position]);
         $level = $this->calculator->determineJobLevel($command->expectedSalary);
         $jobApplication = new JobApplication();
         $jobApplication
