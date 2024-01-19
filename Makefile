@@ -9,3 +9,6 @@ ssh:
 
 db:
 	docker compose exec db bash
+
+build:
+	docker compose up -d --build
