@@ -1,0 +1,101 @@
+{
+	"info": {
+		"_postman_id": "b96a7bd0-f42e-41ac-b0b2-2e8fcdb3e507",
+		"name": "Rokezzz",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8150260",
+		"_collection_link": "https://blue-resonance-959436.postman.co/workspace/DigiLife~30b9d91e-68bb-40f1-b7bd-3e7000bfbd0d/collection/8150260-b96a7bd0-f42e-41ac-b0b2-2e8fcdb3e507?action=share&source=collection_link&creator=8150260"
+	},
+	"item": [
+		{
+			"name": "Create job application",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"firstName\": \"John\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/api/job-application",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"job-application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List read job applications",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/api/job-application/readpage=1&sort=expectedSalary&order=DESC&position=4",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"job-application",
+						"readpage=1&sort=expectedSalary&order=DESC&position=4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List unread job applications",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/api/job-application/unread?page=1&sort=expectedSalary&order=DESC",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"api",
+						"job-application",
+						"unread"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "sort",
+							"value": "expectedSalary"
+						},
+						{
+							"key": "order",
+							"value": "DESC"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get single job application",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
