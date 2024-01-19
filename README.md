@@ -14,3 +14,9 @@ Docker and docker compose - last versions
 
 ## Usage:
 - import postman collection to test API
+- GET parameters for list endpoints:
+    
+  - page=1 - number of page
+  - sort=createdAt - column from `job_application` to sort by 
+  - order=DESC - sort order
+  - position=2 - id of position from `postition` table
