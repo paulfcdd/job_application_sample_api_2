@@ -1,4 +1,4 @@
-# Rokezzz test task
+# JBSA2 (Job Application Sample Api 2) project
 
 ## Requirements:
 Docker and docker compose - last versions
